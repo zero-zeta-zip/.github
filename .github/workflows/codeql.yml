@@ -60,7 +60,7 @@ jobs:
     # Add any setup steps before running the `github/codeql-action/init` action.
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
     # or others). This is typically only required for manual builds.
-    # - name: Setup runtime (example)
+    # - name: Setup runtime (example)[sections/typesystem.tex](:/7c55b0f7d1f645ba8bbd4ad920628422)
     #   uses: actions/setup-example@v1
 
     # Initializes the CodeQL tools for scanning.
@@ -94,6 +94,6 @@ jobs:
         exit 1
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v4
-      with:
+      uses:[sections/ast.txt](:/84ea84cba89b472a99d89735bf9d6352) github/codeql-action/analyze@v4
+      with:[sections/typesystem.tex](:/7c55b0f7d1f645ba8bbd4ad920628422)
         category: "/language:${{matrix.language}}"
