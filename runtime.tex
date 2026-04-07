@@ -1,0 +1,208 @@
+sections/runtime.tex
+
+% ============================
+
+% Runtime Model and Execution Strategy
+
+% ============================
+
+\\section{Runtime Model and Execution Strategy}
+
+The Ω⁺ runtime integrates discrete graph evolution, pattern-directed
+
+rewrites, and continuous field dynamics into a unified execution model.
+
+This section defines the runtime phases, scheduling policies, and
+
+numerical integration strategy used to evaluate Ω⁺ programs.
+
+\\subsection{Runtime Configuration}
+
+Execution proceeds over configurations:
+
+\\\[
+
+&nbsp;\\Config = (G, F, R, P, \\tau, Q, M)
+
+\\\]
+
+as defined in Section~4. The configuration evolves through a sequence of
+
+small-step transitions and epoch-level updates.
+
+\\subsection{Epoch Structure}
+
+Execution is organized into \\emph{epochs}, each of duration \$\\Delta t\$.
+
+An epoch consists of five ordered phases:
+
+\\begin{enumerate}
+
+&nbsp;\\item \\textbf{Scheduled Dynamics.}
+
+&nbsp;  All dynamics \$(n @ t_d ::= n')\$ with \$t_d \\le \\tau\$ are dequeued
+
+&nbsp;  and applied. These may update node labels, introduce new nodes, or
+
+&nbsp;  schedule additional events.
+
+&nbsp;\\item \\textbf{Structural Rewrites.}
+
+&nbsp;  All patterns \$p \\in P\$ are matched against the graph \$G\$.
+
+&nbsp;  A scheduler selects a non-overlapping subset of matches, and each
+
+&nbsp;  selected match fires, applying its associated rewrite.
+
+&nbsp;\\item \\textbf{Continuous Field Integration.}
+
+&nbsp;  Each continuous field (e.g., \$I\$, \$\\Mu\$) is updated by numerical
+
+&nbsp;  integration of its governing PDE over \$\\Delta t\$.
+
+&nbsp;\\item \\textbf{Discrete Field Stabilization.}
+
+&nbsp;  Discrete field updates (e.g., \$\\Mu := \\Mu + \\eta \\nabla(\\Phi)\$)
+
+&nbsp;  are applied based on the updated graph and field configuration.
+
+&nbsp;\\item \\textbf{Region and Metadata Update.}
+
+&nbsp;  Region memberships are recomputed, derived quantities are updated,
+
+&nbsp;  and the logical time is advanced:
+
+&nbsp;  \\\[
+
+&nbsp;    \\tau \\leftarrow \\tau + \\Delta t.
+
+&nbsp;  \\\]
+
+\\end{enumerate}
+
+The epoch transition is:
+
+\\\[
+
+&nbsp;\\Config_\\tau \\LStep{\\text{epoch}(\\Delta t)} \\Config_{\\tau + \\Delta t}.
+
+\\\]
+
+\\subsection{Scheduling Policies}
+
+Pattern firing is controlled by a scheduler specified in \$M\$.
+
+Supported policies include:
+
+\\begin{itemize}
+
+&nbsp;\\item \\textbf{Maximal Parallelism.}
+
+&nbsp;  All non-overlapping matches fire simultaneously.
+
+&nbsp;\\item \\textbf{Priority-Based Scheduling.}
+
+&nbsp;  Patterns are assigned priorities; higher-priority patterns fire
+
+&nbsp;  first, and lower-priority patterns may be deferred.
+
+&nbsp;\\item \\textbf{Randomized Scheduling.}
+
+&nbsp;  A random subset of matches is selected, enabling nondeterministic
+
+&nbsp;  exploration of system behavior.
+
+&nbsp;\\item \\textbf{Deterministic Sequential Scheduling.}
+
+&nbsp;  Matches are ordered deterministically (e.g., by node identifier)
+
+&nbsp;  and fired sequentially.
+
+\\end{itemize}
+
+Schedulers may enforce fairness guarantees, such as weak fairness:
+
+if a pattern remains continuously enabled, it must eventually fire.
+
+\\subsection{Numerical Integration}
+
+Continuous fields evolve according to PDEs such as:
+
+\\\[
+
+&nbsp;\\frac{\\partial I}{\\partial t} = \\Mu(x)\\nabla I + \\rho(x,t).
+
+\\\]
+
+The runtime supports multiple integration methods:
+
+\\begin{itemize}
+
+&nbsp;\\item explicit Euler,
+
+&nbsp;\\item Runge--Kutta (e.g., RK4),
+
+&nbsp;\\item implicit solvers for stiff systems,
+
+&nbsp;\\item spectral or finite-volume methods for structured domains.
+
+\\end{itemize}
+
+The choice of solver and discretization parameters (e.g., spatial step
+
+\$h\$, time step \$\\Delta t\$) is stored in \$M\$.
+
+Stability constraints such as the CFL condition must be satisfied:
+
+\\\[
+
+&nbsp;\\Delta t \\le \\frac{h}{\\max_x |\\Mu(x)|}.
+
+\\\]
+
+\\subsection{Region Recalculation}
+
+Regions may be defined by spatial domains, graph subsets, or contextual
+
+conditions. After each epoch, region membership is recomputed based on:
+
+\\begin{itemize}
+
+&nbsp;\\item node coordinates or embeddings,
+
+&nbsp;\\item field thresholds,
+
+&nbsp;\\item structural properties of the graph.
+
+\\end{itemize}
+
+\\subsection{Execution Parameters}
+
+The metadata \$M\$ contains:
+
+\\begin{itemize}
+
+&nbsp;\\item scheduler choice,
+
+&nbsp;\\item time step \$\\Delta t\$,
+
+&nbsp;\\item field solver parameters,
+
+&nbsp;\\item learning rates for discrete updates,
+
+&nbsp;\\item numerical clamps and bounds,
+
+&nbsp;\\item random seed for nondeterministic scheduling.
+
+\\end{itemize}
+
+These parameters allow Ω⁺ to be executed deterministically or
+
+nondeterministically, depending on the desired behavior.
+
+This runtime model provides a coherent framework for integrating
+
+graph-based rewrites and continuous field evolution within a single
+
+execution semantics.
+
