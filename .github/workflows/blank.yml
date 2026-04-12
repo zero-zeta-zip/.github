@@ -37,5 +37,4 @@ jobs:
         run: |
           echo Add other actions to build,
 
-Do you want to install  'webpack-cli' (yes/no): yes
-          echo test, and deploy your project.
+D
