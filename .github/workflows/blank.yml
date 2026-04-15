@@ -36,5 +36,5 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-         + name: Run build webpack-cli
+         + name: Run build useing webpack-cli
           echo test, and deploy your project.
