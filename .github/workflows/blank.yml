@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:install  webpack-cli
+    steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
@@ -36,5 +36,5 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-          webpack-cli:
+         + webpack-cli:
           echo test, and deploy your project.
